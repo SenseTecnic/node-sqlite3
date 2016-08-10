@@ -165,6 +165,8 @@ void Database::Work_Open(uv_work_t* req) {
     else {
         // Set default database handle values.
         sqlite3_busy_timeout(db->_handle, 1000);
+        // set athorizer to not allow PRAGMA
+        sqlite3_set_authorizer(db->_handle, AuthorizerCallback, NULL);
     }
 }
 
@@ -503,6 +505,18 @@ void Database::UpdateCallback(Database *db, UpdateInfo* info) {
     };
     EMIT_EVENT(db->handle(), 4, argv);
     delete info;
+}
+
+int Database::AuthorizerCallback(void* db, int action_type,
+        const char* details1,
+        const char* details2,
+        const char* details3,
+        const char* details4) {
+    // deny all PRAGMA calls, they allow the user to change db configuration
+    if (action_type == SQLITE_PRAGMA) {
+        return SQLITE_DENY;
+    }
+    return SQLITE_OK;
 }
 
 NAN_METHOD(Database::Exec) {

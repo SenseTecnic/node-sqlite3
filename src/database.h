@@ -168,6 +168,12 @@ protected:
     static void UpdateCallback(void* db, int type, const char* database, const char* table, sqlite3_int64 rowid);
     static void UpdateCallback(Database* db, UpdateInfo* info);
 
+    static int AuthorizerCallback(void* db, int action_type,
+        const char* details1,
+        const char* details2,
+        const char* details3,
+        const char* details4);
+
     void RemoveCallbacks();
 
 protected:

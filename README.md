@@ -1,4 +1,7 @@
-Asynchronous, non-blocking [SQLite3](http://sqlite.org/) bindings for [Node.js](http://nodejs.org/).
+# Asynchronous, non-blocking SQLite bindings for Node.js.
+
+[SQLite3](http://sqlite.org/)
+[Node.js](http://nodejs.org/)
 
 [![NPM](https://nodei.co/npm/sqlite3.png?downloads=true&downloadRank=true)](https://nodei.co/npm/sqlite3/)
 
@@ -7,6 +10,17 @@ Asynchronous, non-blocking [SQLite3](http://sqlite.org/) bindings for [Node.js](
 [![Coverage Status](https://coveralls.io/repos/mapbox/node-sqlite3/badge.svg?branch=master&service=github)](https://coveralls.io/github/mapbox/node-sqlite3?branch=master)
 [![Dependencies](https://david-dm.org/mapbox/node-sqlite3.svg)](https://david-dm.org/mapbox/node-sqlite3)
 
+## Sense Tecnic Changes
+
+**Aug 10, 2016**
+
+This forked version (3.1.4-0.0.1) of the module has been modified slightly for use with the Sense Tecnic private Node-RED node `sts-node-red-contrib-litedb` node.
+
+Specifically we have changed the maximum page count to be 1024 limiting the database size, and have disabled the use of PRAGMA statements that allow the client to make configuration changes to the database.
+
+The maximum database size is 4MB assuming a page count of 4096 (1024 * 4096).
+
+To ensure these changes are made to the sqlite C code the node must be installed with `--build-from-source` option.
 
 ## Supported platforms
 
