@@ -1,7 +1,5 @@
-# Asynchronous, non-blocking SQLite bindings for Node.js.
+Asynchronous, non-blocking [SQLite3](https://sqlite.org/) bindings for [Node.js](http://nodejs.org/).
 
-[SQLite3](http://sqlite.org/)
-[Node.js](http://nodejs.org/)
 
 [![NPM](https://nodei.co/npm/sqlite3.png?downloads=true&downloadRank=true)](https://nodei.co/npm/sqlite3/)
 
@@ -22,9 +20,14 @@ The maximum database size is 4MB assuming a page count of 4096 (1024 * 4096).
 
 To ensure these changes are made to the sqlite C code the node must be installed with `--build-from-source` option.
 
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bhttps%3A%2F%2Fgithub.com%2Fmapbox%2Fnode-sqlite3.svg?type=shield)](https://app.fossa.io/projects/git%2Bhttps%3A%2F%2Fgithub.com%2Fmapbox%2Fnode-sqlite3?ref=badge_shield)
+[![N-API v3 Badge](https://img.shields.io/badge/N--API-v3-green.svg)](https://nodejs.org/dist/latest/docs/api/n-api.html#n_api_n_api)
+
 ## Supported platforms
 
-The `sqlite3` module works with Node.js v0.10.x, v0.12.x, v4.x, and v5.x.
+The `sqlite3` module works with:
+* Node.js v11.x, v12.x, v13.x and v14.x.
+* Electron v6.0.x, v6.1.x, v7.0.x, v7.1.x, v8.0.x, v8.1.x and v8.2.x
 
 Binaries for most Node versions and platforms are provided by default via [node-pre-gyp](https://github.com/mapbox/node-pre-gyp).
 
@@ -63,15 +66,14 @@ db.close();
  - Full Buffer/Blob support
  - Extensive [debugging support](https://github.com/mapbox/node-sqlite3/wiki/Debugging)
  - [Query serialization](https://github.com/mapbox/node-sqlite3/wiki/Control-Flow) API
- - [Extension support](https://github.com/mapbox/node-sqlite3/wiki/Extensions)
+ - [Extension support](https://github.com/mapbox/node-sqlite3/wiki/Extensions), including bundled support for the [json1 extension](https://www.sqlite.org/json1.html).
  - Big test suite
  - Written in modern C++ and tested for memory leaks
-
+ - Bundles SQLite3 3.32.3 as a fallback if the installing system doesn't include SQLite
 
 # API
 
 See the [API documentation](https://github.com/mapbox/node-sqlite3/wiki) in the wiki.
-
 
 # Installing
 
@@ -104,6 +106,26 @@ If building against an external sqlite3 make sure to have the development header
 Note, if building against homebrew-installed sqlite on OS X you can do:
 
     npm install --build-from-source --sqlite=/usr/local/opt/sqlite/
+
+By default the node-gyp install will use `python` as part of the installation. A
+different python executable can be specified on the command line.
+
+    npm install --build-from-source --python=/usr/bin/python2
+
+This uses the npm_config_python config, so values in .npmrc will be honoured:
+
+    python=/usr/bin/python2
+
+## Custom file header (magic)
+
+The default sqlite file header is "SQLite format 3".
+You can specify a different magic, though this will make standard tools and libraries unable to work with your files.
+
+
+    npm install --build-from-source --sqlite_magic="MyCustomMagic15"
+
+
+Note that the magic *must* be exactly 15 characters long (16 bytes including null terminator).
 
 ## Building for node-webkit
 
@@ -145,7 +167,7 @@ For instructions for building sqlcipher see
 To run node-sqlite3 against sqlcipher you need to compile from source by passing build options like:
 
     npm install sqlite3 --build-from-source --sqlite_libname=sqlcipher --sqlite=/usr/
-    
+
     node -e 'require("sqlite3")'
 
 If your sqlcipher is installed in a custom location (if you compiled and installed it yourself),
@@ -158,7 +180,7 @@ Set the location where `brew` installed it:
     export LDFLAGS="-L`brew --prefix`/opt/sqlcipher/lib"
     export CPPFLAGS="-I`brew --prefix`/opt/sqlcipher/include"
     npm install sqlite3 --build-from-source --sqlite_libname=sqlcipher --sqlite=`brew --prefix`
-    
+
     node -e 'require("sqlite3")'
 
 ### On most Linuxes (including Raspberry Pi)
@@ -169,8 +191,18 @@ Set the location where `make` installed it:
     export CPPFLAGS="-I/usr/local/include -I/usr/local/include/sqlcipher"
     export CXXFLAGS="$CPPFLAGS"
     npm install sqlite3 --build-from-source --sqlite_libname=sqlcipher --sqlite=/usr/local --verbose
-    
+
     node -e 'require("sqlite3")'
+
+### Custom builds and Electron
+
+Running sqlite3 through [electron-rebuild](https://github.com/electron/electron-rebuild) does not preserve the sqlcipher extension, so some additional flags are needed to make this build Electron compatible. Your `npm install sqlite3 --build-from-source` command needs these additional flags (be sure to replace the target version with the current Electron version you are working with):
+
+    --runtime=electron --target=1.7.6 --dist-url=https://electronjs.org/headers
+
+In the case of MacOS with Homebrew, the command should look like the following:
+
+    npm install sqlite3 --build-from-source --sqlite_libname=sqlcipher --sqlite=`brew --prefix` --runtime=electron --target=1.7.6 --dist-url=https://electronjs.org/headers
 
 # Testing
 
@@ -180,7 +212,6 @@ In sqlite3's directory (where its `package.json` resides) run the following:
 
     npm install mocha
     npm test
-
 
 # Contributors
 
@@ -198,16 +229,16 @@ In sqlite3's directory (where its `package.json` resides) run the following:
 * [Johannes Schauer](https://github.com/pyneo)
 * [Mithgol](https://github.com/Mithgol)
 
-
 # Acknowledgments
 
 Thanks to [Orlando Vazquez](https://github.com/orlandov),
 [Eric Fredricksen](https://github.com/grumdrig) and
 [Ryan Dahl](https://github.com/ry) for their SQLite bindings for node, and to mraleph on Freenode's #v8 for answering questions.
 
-Development of this module is sponsored by [MapBox](http://mapbox.org/).
-
+Development of this module is sponsored by [MapBox](https://mapbox.com/).
 
 # License
 
 `node-sqlite3` is [BSD licensed](https://github.com/mapbox/node-sqlite3/raw/master/LICENSE).
+
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bhttps%3A%2F%2Fgithub.com%2Fmapbox%2Fnode-sqlite3.svg?type=large)](https://app.fossa.io/projects/git%2Bhttps%3A%2F%2Fgithub.com%2Fmapbox%2Fnode-sqlite3?ref=badge_large)
